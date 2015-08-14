@@ -9,7 +9,7 @@
         javascript-observable
  */
 
-var object = require('javascript-object-paraphernalia'),
+var obj = require('javascript-object-paraphernalia'),
     collection = require('javascript-collection-paraphernalia')
 
 function Observable() {
@@ -18,13 +18,22 @@ function Observable() {
 
 Observable.prototype.publish = function(eventName, eventArguments) {
     collection.each(this._getSubscribers(eventName),
-        this._onEachSubscriber(Array.prototype.slice.call(arguments)));
+        this._onEachSubscriber(Array.prototype.slice.call(arguments, 1)));
 };
 
 Observable.prototype._onEachSubscriber = function(eventArguments) {
-    if (obj.is(subscriber.event, 'Function')) {
-        return function(index, subscriber) { subscriber.event.apply(this, eventArguments); }
+    return function(index, subscriber) {
+        if (obj.is(subscriber.event, 'Function')) {
+            subscriber.event.apply(this, eventArguments);
+        }
     }
 }
 
-module.exports = new Observable();
+Observable.prototype._getSubscribers = function(eventName) {
+    return collection.filter(this.register, function(subscription) {
+        return subscription.eventName === eventName;
+    })
+}
+
+
+module.exports = Observable;

@@ -26,7 +26,8 @@
   },
   "homepage": "https://github.com/any-code/javascript-observable#readme",
   "devDependencies": {
-    "nodeunit": "^0.9.1"
+    "nodeunit": "^0.9.1",
+    "sinon": "^1.15.4"
   },
   "dependencies": {
     "javascript-collection-paraphernalia": "^1.0.1",
