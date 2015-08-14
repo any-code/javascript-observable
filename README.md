@@ -1,5 +1,7 @@
 # javascript-observable
 
+[![Build Status](https://travis-ci.org/any-code/javascript-observable.svg?branch=master)](https://travis-ci.org/any-code/javascript-observable)
+
 > Javascript observable class - useful for publishing and subscribing to messages in a component driven system
 
 ## Copyright and license
