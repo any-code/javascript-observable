@@ -1,6 +1,6 @@
 {
   "name": "javascript-observable",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Javascript observable class - useful for publishing and subscribing to messages in a component driven system",
   "main": "index.js",
   "scripts": {
