@@ -1,0 +1,35 @@
+{
+  "name": "javascript-observable",
+  "version": "0.1.0",
+  "description": "Javascript observable class - useful for publishing and subscribing to messages in a component driven system",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodeunit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/any-code/javascript-observable.git"
+  },
+  "keywords": [
+    "observable",
+    "message",
+    "bus",
+    "observer",
+    "pubsub",
+    "publish",
+    "subscribe"
+  ],
+  "author": "Lee Tagg <lee@anycode.io>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/any-code/javascript-observable/issues"
+  },
+  "homepage": "https://github.com/any-code/javascript-observable#readme",
+  "devDependencies": {
+    "nodeunit": "^0.9.1"
+  },
+  "dependencies": {
+    "javascript-collection-paraphernalia": "^1.0.1",
+    "javascript-object-paraphernalia": "^1.0.1"
+  }
+}
