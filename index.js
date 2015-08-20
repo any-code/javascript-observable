@@ -21,7 +21,7 @@ Observable.prototype.publish = function(eventName, eventArguments) {
         this._onEachSubscriber(Array.prototype.slice.call(arguments, 1)));
 };
 
-Observable.prototype.subscribe = function(eventName, event, numberOfTimesThisSpecificSubscriptionCanBeRegistered) {
+Observable.prototype.subscribe = function(eventName, event, numberOfTimesSubscriptionCanBeRegistered) {
     if (eventName.length < 1) {
         throw new EventException('Cannot subscribe to an unnamed observable event');
     }
@@ -30,11 +30,12 @@ Observable.prototype.subscribe = function(eventName, event, numberOfTimesThisSpe
         throw new EventException('Cannot subscribe to an observable without a valid event');
     }
 
-    if (numberOfTimesThisSpecificSubscriptionCanBeRegistered === undefined) {
-        numberOfTimesThisSpecificSubscriptionCanBeRegistered = 1;
+    if (numberOfTimesSubscriptionCanBeRegistered === undefined) {
+        numberOfTimesSubscriptionCanBeRegistered = 1;
     }
 
-    if (this._isRegistered(eventName, event) < numberOfTimesThisSpecificSubscriptionCanBeRegistered) {
+    if (numberOfTimesSubscriptionCanBeRegistered === -1 ||
+            this._isRegistered(eventName, event) < numberOfTimesSubscriptionCanBeRegistered) {
         this.register.push({
             eventName: eventName,
             event: event

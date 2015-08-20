@@ -86,6 +86,23 @@ exports.testSubscribeOccursAnyTimes = function(test) {
     test.done();
 }
 
+exports.testSubscribeOccursInfiniteTimes = function(test) {
+    var o = new Observable(),
+        result = 0,
+        i = 50;
+
+    while (i--) {
+        o.subscribe('foo-bar', function() {
+            result++;
+        }, -1)
+    }
+
+    o.publish('foo-bar');
+
+    test.equal(result, 50, "the subscriber's callback event was called " + result + " but the test expected 5");
+    test.done();
+}
+
 exports.testPublish = function(test) {
     var o = new Observable(),
         result = null;
