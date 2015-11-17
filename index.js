@@ -10,7 +10,8 @@
  */
 
 var obj = require('javascript-object-paraphernalia'),
-    collection = require('javascript-collection-paraphernalia')
+    collection = require('javascript-collection-paraphernalia'),
+    registrations = 0;
 
 function Observable() {
     this.register = [];
@@ -24,6 +25,8 @@ Observable.prototype.publish = function (eventName, eventArguments) {
 Observable.prototype.subscribe = function (eventName, event, idOrAllowedRegistrations) {
     var numberOfTimesSubscriptionCanBeRegistered,
         id;
+
+    event.__registration_tag = registrations++
 
     if (eventName.length < 1) {
         throw new EventException('Cannot subscribe to an unnamed observable event');
@@ -77,7 +80,8 @@ Observable.prototype._isRegistered = function (eventName, event) {
     var registered = 0;
     if (this.register.length > 0) {
         collection.each(this.register, function (index, item) {
-            if (item.event.toString() === event.toString() && item.eventName === eventName) {
+            if ((item.event.__registration_tag === event.__registration_tag && item.eventName === eventName) ||
+                (item.event.toString() === event.toString() && item.eventName === eventName)) {
                 registered++;
             }
         });
