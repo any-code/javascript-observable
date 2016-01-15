@@ -54,7 +54,7 @@ var Observable = require('javascript-observable'),
 ```
 
 ## Copyright and license
-Copyright (c) 2015, Any Code <lee@anycode.io>
+Copyright (c) 2015-2016, [Anycode](https://anycode.io/ "Anycode") <lee@anycode.io>
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
