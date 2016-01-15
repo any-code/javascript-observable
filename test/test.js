@@ -15,6 +15,20 @@ exports.testSubscribe = function(test) {
     test.done();
 }
 
+exports.testOnTrigger = function(test) {
+    var o = new Observable(),
+        result = null;
+
+    o.on('foo-bar', function(value) {
+        result = value;
+    });
+
+    o.trigger('foo-bar', "RESULT");
+
+    test.equal(result, "RESULT", "the subscriber's callback event was never called after the observer was published");
+    test.done();
+}
+
 exports.testDeferredSubscribe = function(test) {
     var o = new Observable(),
         result = null;
@@ -76,6 +90,23 @@ exports.testSubscribeOccursAnyTimes = function(test) {
 
     while (i--) {
         o.subscribe('foo-bar', function() {
+            result++;
+        }, 5)
+    }
+
+    o.publish('foo-bar');
+
+    test.equal(result, 5, "the subscriber's callback event was called " + result + " but the test expected 5");
+    test.done();
+}
+
+exports.testSubscribeOccursAnyTimesWithOn = function(test) {
+    var o = new Observable(),
+        result = 0,
+        i = 10;
+
+    while (i--) {
+        o.on('foo-bar', function() {
             result++;
         }, 5)
     }

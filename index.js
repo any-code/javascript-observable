@@ -22,6 +22,8 @@ Observable.prototype.publish = function (eventName, eventArguments) {
         this._onEachSubscriber(Array.prototype.slice.call(arguments, 1)));
 };
 
+Observable.prototype.trigger = Observable.prototype.publish;
+
 Observable.prototype.subscribe = function (eventName, event, idOrAllowedRegistrations) {
     var numberOfTimesSubscriptionCanBeRegistered,
         id;
@@ -68,6 +70,8 @@ Observable.prototype.subscribe = function (eventName, event, idOrAllowedRegistra
     }
     return true;
 };
+
+Observable.prototype.on = Observable.prototype.subscribe;
 
 Observable.prototype.deferredSubscribe = function (eventName, numberOfTimesThisSpecificSubscriptionCanBeRegistered) {
     var $this = this;
