@@ -24,11 +24,8 @@ Observable.prototype.publish = function (eventName, eventArguments) {
 
 Observable.prototype.trigger = Observable.prototype.publish;
 
-Observable.prototype.subscribe = function (eventName, event, idOrAllowedRegistrations) {
-    var numberOfTimesSubscriptionCanBeRegistered,
-        id;
-
-    event.__registration_tag = registrations++
+Observable.prototype.subscribe = function (eventName, event, id) {
+    event.__registration_tag = event.__registration_tag ? event.__registration_tag : registrations++
 
     if (eventName.length < 1) {
         throw new EventException('Cannot subscribe to an unnamed observable event');
@@ -38,45 +35,47 @@ Observable.prototype.subscribe = function (eventName, event, idOrAllowedRegistra
         throw new EventException('Cannot subscribe to an observable without a valid event');
     }
 
-    if (idOrAllowedRegistrations && obj.is(idOrAllowedRegistrations, 'String')) {
-        id = idOrAllowedRegistrations;
-    } else {
-        numberOfTimesSubscriptionCanBeRegistered = idOrAllowedRegistrations || 1;
+    if (!id) {
+        id = 'id_' + event.__registration_tag;
     }
 
-    if (id !== undefined) {
-        var registered = collection.find(this.register, function (item) {
-            return item.id === id;
-        })
+    var registered = collection.find(this.register, function (item) {
+        return item.id === id;
+    })
 
-        if (!registered) {
-            this.register.push({
-                eventName: eventName,
-                event: event,
-                id: id
-            });
-        } else {
-            registered.eventName = eventName;
-            registered.event = event;
-        }
+    if (!registered) {
+        this.register.push({
+            eventName: eventName,
+            event: event,
+            id: id
+        });
     } else {
-        if (numberOfTimesSubscriptionCanBeRegistered === -1 ||
-            this._isRegistered(eventName, event) < numberOfTimesSubscriptionCanBeRegistered) {
-            this.register.push({
-                eventName: eventName,
-                event: event
-            });
-        }
+        registered.eventName = eventName;
+        registered.event = event;
     }
-    return true;
+
+    return id;
 };
+
+Observable.prototype.once = function(eventName, event) {
+    var func = function () {
+        var args = Array.prototype.splice.call(arguments, 0)
+        event.apply(this, args)
+
+        this.register = collection.filter(this.register, function(item) {
+            return item.event.__registration_tag != func.__registration_tag
+        })
+    }.bind(this)
+
+    this.on(eventName, func);
+}
 
 Observable.prototype.on = Observable.prototype.subscribe;
 
-Observable.prototype.deferredSubscribe = function (eventName, numberOfTimesThisSpecificSubscriptionCanBeRegistered) {
+Observable.prototype.deferredSubscribe = function (eventName, id) {
     var $this = this;
     return function (callback) {
-        $this.subscribe(eventName, callback, numberOfTimesThisSpecificSubscriptionCanBeRegistered);
+        $this.subscribe(eventName, callback, id);
     }
 }
 

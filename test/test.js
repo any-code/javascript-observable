@@ -49,15 +49,14 @@ exports.testDeferredSubscribeOccursOnce = function(test) {
         result = 0;
 
     var subscription = o.deferredSubscribe('foo-bar');
-    subscription(function() {
+
+    var func = function() {
         result++;
-    });
-    subscription(function() {
-        result++;
-    });
-    subscription(function() {
-        result++;
-    });
+    };
+
+    subscription(func);
+    subscription(func);
+    subscription(func);
 
     o.publish('foo-bar');
 
@@ -68,30 +67,43 @@ exports.testDeferredSubscribeOccursOnce = function(test) {
 exports.testDeferredSubscribeOccursAnyTimes = function(test) {
     var o = new Observable(),
         result = 0,
-        subscription = o.deferredSubscribe('foo-bar', 5),
-        i = 10;
+        subscription = o.deferredSubscribe('foo-bar', 'id-foo-for-bar'),
+        i = 5;
+
+    subscription(function() { result++; });
 
     while (i--) {
-        subscription(function() {
-            result++;
-        });
+        o.publish('foo-bar');
     }
 
-    o.publish('foo-bar');
-
     test.equal(result, 5, "the subscriber's callback event was called " + result + " but the test expected 5");
+    test.done();
+}
+
+exports.testOnce = function(test) {
+    var o = new Observable(),
+        i = 10,
+        result = 0;
+
+    o.once('boing', function() { result++ })
+
+    while (i--) {
+        o.trigger('boing');
+    }
+
+    test.equal(result, 1, "the subscriber's callback event was called " + result + " but the test expected 1");
     test.done();
 }
 
 exports.testSubscribeOccursAnyTimes = function(test) {
     var o = new Observable(),
         result = 0,
-        i = 10;
+        i = 5;
 
     while (i--) {
         o.subscribe('foo-bar', function() {
             result++;
-        }, 5)
+        }, 'id-' + i)
     }
 
     o.publish('foo-bar');
@@ -103,34 +115,17 @@ exports.testSubscribeOccursAnyTimes = function(test) {
 exports.testSubscribeOccursAnyTimesWithOn = function(test) {
     var o = new Observable(),
         result = 0,
-        i = 10;
+        i = 5;
 
     while (i--) {
         o.on('foo-bar', function() {
             result++;
-        }, 5)
+        }, 'my-id-' + i)
     }
 
     o.publish('foo-bar');
 
     test.equal(result, 5, "the subscriber's callback event was called " + result + " but the test expected 5");
-    test.done();
-}
-
-exports.testSubscribeOccursInfiniteTimes = function(test) {
-    var o = new Observable(),
-        result = 0,
-        i = 50;
-
-    while (i--) {
-        o.subscribe('foo-bar', function() {
-            result++;
-        }, -1)
-    }
-
-    o.publish('foo-bar');
-
-    test.equal(result, 50, "the subscriber's callback event was called " + result + " but the test expected 5");
     test.done();
 }
 
@@ -187,7 +182,6 @@ exports.testGetSubscribers = function(test) {
     test.equal(o._getSubscribers('foo-bar').length, 3, "Wrong number of subscriber's were retrieved");
     test.done();
 }
-
 
 exports.testOnEachSubscriber = function(test) {
     var subscription = {
